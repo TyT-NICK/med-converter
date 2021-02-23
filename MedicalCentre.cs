@@ -16,6 +16,7 @@ namespace medConvert
         public int          Id { get; private set; }
         public string       FullName { get; private set; }
         public string       City { get; private set; }
+        public int          Type { get; private set; }
         public List<Rate>   Rates { get; private set; }
 
         public static void InsertAllToDB()
@@ -37,14 +38,14 @@ namespace medConvert
             sqlClient.Close();
         }
 
-        public MedicalCentre(string fullName, string city)
+        public MedicalCentre(string fullName, string city, int type)
         {
-            this.FullName   = fullName;
-            this.City       = city;
+            this.FullName = fullName;
+            this.City = city;
+            this.Type = type;
 
             Debug.WriteLine(this);
             centres.Add(this);
-            Debug.WriteLine(centres.Count);
         }
 
         override public string ToString()
