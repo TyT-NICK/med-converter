@@ -29,8 +29,34 @@ namespace medConvert
                         string fullName = sheet.Cells[row, 2].Value.ToString();
                         string type = sheet.Cells[row, 3].Value.ToString();
                         string city = sheet.Cells[row, 4].Value.ToString();
-                        
-                        new MedicalCentre(fullName, city, type, sheetId.ToString());
+
+                        var centre = new MedicalCentre(fullName, city, type, sheetId.ToString());
+
+                        for (int yearColumn = 0; yearColumn < 4; yearColumn++)
+                        {
+                            int year = 2015 + yearColumn;
+
+                            int staff = Convert.ToInt32((double)sheet.Cells[row, 5 + yearColumn].Value);
+                            int staffAvg = Convert.ToInt32((double)sheet.Cells[row, 9 + yearColumn].Value);
+                            double salAvg = (double)sheet.Cells[row, 13 + yearColumn].Value;
+                            double fin = (double)sheet.Cells[row, 17 + yearColumn].Value;
+                            double fund = (double)sheet.Cells[row, 21 + yearColumn].Value;
+
+                            if (year == 2018)
+                            {
+                                double salSenior = (double)sheet.Cells[row, 28].Value;
+                                double salMiddle = (double)sheet.Cells[row, 29].Value;
+                                double salJun = (double)sheet.Cells[row, 30].Value;
+
+                                Rate rate = new Rate(year, staff, staffAvg, salAvg, fin, fund, salSenior, salMiddle, salJun);
+                                centre.Rates.Add(rate);
+                            } else
+                            {
+                                Rate rate = new Rate(year, staff, staffAvg, salAvg, fin, fund);
+                                centre.Rates.Add(rate);
+                            }
+                            
+                        }
                     }
                 }
             }
@@ -61,29 +87,22 @@ namespace medConvert
 
         static void Main(string[] args)
         {
-            try
+            Console.Write("Путь к файлу: ");
+            string path = Console.ReadLine();
+            if (path != String.Empty)
             {
-                Console.Write("Путь к файлу: ");
-                string path = Console.ReadLine();
-                if (path != String.Empty)
-                {
-                    OpenFile(path);
-                }
-                else
-                {
-                    OpenFile();
-                }
-
-                MedicalCentre.Centres[0].Save();
-
-                Console.WriteLine("Файл считан (esc - выход)");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    return;
+                OpenFile(path);
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
+                OpenFile();
             }
+
+            MedicalCentre.SaveAll();
+
+            Console.WriteLine("Файл считан (esc - выход)");
+            if (Console.ReadKey().Key == ConsoleKey.Escape)
+                return;
         }
     }
 }

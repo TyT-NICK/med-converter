@@ -9,22 +9,24 @@ namespace medConvert
     {
         public static List<MedicalCentre> Centres = new List<MedicalCentre>();
 
-        private List<Rate> rates = new List<Rate>();
-
         public long         Id { get; set; }
         public string       FullName { get; private set; }
         public string       Location { get; private set; }
         public string       Vid { get; private set; }
         public string       Type { get; private set; }
-        public List<Rate> Rates { get; private set; }
+        public List<Rate> Rates { get; private set; } = new List<Rate>();
 
-        public void Save()
+        public static void SaveAll()
         {
-            DBWriter.InsertCenter(this);
+            foreach (var centre in Centres)
+            {
+                centre.Save();
+            }
         }
 
-        public void SaveRates()
+        void Save()
         {
+            this.Id = DBWriter.InsertCenter(this);
             DBWriter.InsertRates(this);
         }
 
