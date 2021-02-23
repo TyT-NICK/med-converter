@@ -2,55 +2,46 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using MySql.Data.MySqlClient;
 
 namespace medConvert
 {
     class MedicalCentre
     {
-        private static List<MedicalCentre> centres = new List<MedicalCentre>();
-        public static List<MedicalCentre> Centres { get; private set; }
+        public static List<MedicalCentre> Centres = new List<MedicalCentre>();
 
         private List<Rate> rates = new List<Rate>();
 
-        public int          Id { get; private set; }
+        public long         Id { get; set; }
         public string       FullName { get; private set; }
-        public string       City { get; private set; }
-        public int          Type { get; private set; }
-        public List<Rate>   Rates { get; private set; }
+        public string       Location { get; private set; }
+        public string       Vid { get; private set; }
+        public string       Type { get; private set; }
+        public List<Rate> Rates { get; private set; }
 
-        public static void InsertAllToDB()
+        public void Save()
         {
-            const string server = "127.0.0.1",
-                         userId = "root",
-                         password = "root",
-                         database = "medicine",
-                         port = "3306";
-
-            MySqlConnection sqlClient = new MySqlConnection($"Server={server};UserId={userId};Password={password};Database={database}");
-            Debug.WriteLineIf(sqlClient.Ping(), "Соединение с БД установлено");
-
-            sqlClient.Open();
-
-            MySqlCommand command = new MySqlCommand("SELECT * FROM med_uchr", sqlClient);
-            MySqlDataReader reader = command.ExecuteReader();
-
-            sqlClient.Close();
+            DBWriter.InsertCenter(this);
         }
 
-        public MedicalCentre(string fullName, string city, int type)
+        public void SaveRates()
+        {
+            DBWriter.InsertRates(this);
+        }
+
+        public MedicalCentre(string fullName, string city, string type, string vid)
         {
             this.FullName = fullName;
-            this.City = city;
+            this.Location = city;
             this.Type = type;
+            this.Vid = vid;
 
             Debug.WriteLine(this);
-            centres.Add(this);
+            Centres.Add(this);
         }
 
         override public string ToString()
         {
-            return $"{this.FullName} - {this.City}";
+            return $"{this.FullName} - {this.Location}";
         }
     }
 }

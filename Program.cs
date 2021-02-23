@@ -2,6 +2,7 @@
 using System.IO;
 using OfficeOpenXml;
 using MySqlX;
+using System.Diagnostics;
 
 namespace medConvert
 {
@@ -26,9 +27,10 @@ namespace medConvert
 
                         // [Row, Column]
                         string fullName = sheet.Cells[row, 2].Value.ToString();
+                        string type = sheet.Cells[row, 3].Value.ToString();
                         string city = sheet.Cells[row, 4].Value.ToString();
-                        //sheet.
-                        new MedicalCentre(fullName, city, 1);
+                        
+                        new MedicalCentre(fullName, city, type, sheetId.ToString());
                     }
                 }
             }
@@ -59,18 +61,28 @@ namespace medConvert
 
         static void Main(string[] args)
         {
-            OpenFile();
-            while(true)
+            try
             {
                 Console.Write("Путь к файлу: ");
-                try
+                string path = Console.ReadLine();
+                if (path != String.Empty)
                 {
-                    OpenFile(Console.ReadLine());
+                    OpenFile(path);
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
+                    OpenFile();
                 }
+
+                MedicalCentre.Centres[0].Save();
+
+                Console.WriteLine("Файл считан (esc - выход)");
+                if (Console.ReadKey().Key == ConsoleKey.Escape)
+                    return;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }
